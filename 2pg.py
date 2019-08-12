@@ -54,7 +54,11 @@ def postMessage(driver,message,delay):
         driver.execute_script("arguments[0].click();", b)
 
         sleep(int(delay))
-        driver.find_element_by_xpath("//button[@tabindex='0']").send_keys(Keys.ENTER)
+
+        try:
+            driver.find_element_by_xpath("//button[@tabindex='0']").send_keys(Keys.ENTER)
+        except:
+            None
     except:
         return None
     return driver.title
