@@ -46,7 +46,6 @@ def postMessage(driver,message,delay):
     except:
         return None
     return driver.title
-    
 
 
 if __name__ == "__main__":
