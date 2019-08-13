@@ -42,8 +42,15 @@ def getPosts(html_doc,delay):
                 links = post.find_all('a')
                 for link in links:
                     href = link.get('href')
+                    if href[:24] == 'https://l.facebook.com/l':
+                        for i,j in enumerate(href):
+                            if j == '&':
+                                external_url = href[31:i]
+                                break
+
                     print(link.get_text())
-                    print(href)
+                    print(urllib.parse.unquote(external_url))
+                    
                 post_message = post.find("div",{"data-testid":"post_message"})                    
                 print(post_message.get_text())
                 print(createdAt)
