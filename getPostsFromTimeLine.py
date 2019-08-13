@@ -31,7 +31,7 @@ def getPosts(html_doc,delay):
     # print(html_doc)
     try:
         soup = BeautifulSoup(html_doc, 'html.parser')
-        posts = soup.find_all("div",id=lambda value: value and value.startswith("jumper_"))
+        posts = soup.find_all("div",{"role":"article"})# posts = soup.find_all("div",id=lambda value: value and value.startswith("jumper_"))
         
 
         for post in posts:
@@ -59,8 +59,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Facebook Auto Publisher')
     parser.add_argument('email', help='Email address')
     parser.add_argument('password', help='Login password')
-    parser.add_argument('timeline', help='Time Line')
+    parser.add_argument('timeline', help='Time line')
     parser.add_argument('delay', help='Delay')
+    parser.add_argument('scrolllevel', help='Scroll level')
 
     args = parser.parse_args()
 
@@ -80,14 +81,23 @@ if __name__ == "__main__":
         if changePage(driver,'https://www.facebook.com/'+args.timeline,args.delay):
             last_height = driver.execute_script("return document.body.scrollHeight")
             print("redirected")
+            i = 0
             while True:
+                if i == args.scrolllevel:
+                    # getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay)
+                    break
                 # remove_opaque = driver.find_element_by_xpath("//div[@id='mainContainer']")
                 # driver.execute_script("arguments[0].click();", remove_opaque)
                 # remove_opaque = driver.find_element_by_tag_name('body').click()
-                getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay)
+                
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                sleep(int(args.delay)*5)
+                sleep(int(args.delay))
                 new_height = driver.execute_script("return document.body.scrollHeight")
                 if new_height == last_height:
                     break
                 last_height = new_height
+                i += 1
+            getPosts(driver.find_element_by_id('timeline_tab_content').get_attribute("innerHTML"),args.delay)
+            
+    driver.stop_client()
+    driver.quit()

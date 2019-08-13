@@ -39,7 +39,7 @@ def getPosts(html_doc,delay):
             collection.insert_one({"publicacao":str(article),"CollectedUTC":datetime.utcnow().strftime("%d/%m/%Y-%H%M%S"),"createdAt":createdAt})                    
         except:
             None
-                    
+
         links = article.find_all('a')
         post = article.find("div",{"data-testid":"post_message"})
     
@@ -76,6 +76,7 @@ if __name__ == "__main__":
     parser.add_argument('password', help='Login password')
     parser.add_argument('page', help='Page')
     parser.add_argument('delay', help='Delay')
+    parser.add_argument('scrolllevel', help='Scroll level')
 
     args = parser.parse_args()
 
@@ -90,12 +91,17 @@ if __name__ == "__main__":
     if changePage(driver,'https://www.facebook.com/pg/'+args.page+'/posts/',args.delay):
         last_height = driver.execute_script("return document.body.scrollHeight")
         print("redirected")
+        i = 0
         while True:
-            # remove_opaque = driver.find_element_by_tag_name('body').click()
-            getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay) #getPosts(driver.execute_script("return document.body"),args.delay) #getPosts(driver,args.delay)
+            if i == args.scrolllevel:
+                break
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             sleep(int(args.delay)*5)
             new_height = driver.execute_script("return document.body.scrollHeight")
             if new_height == last_height:
                 break
-            last_height = new_height            
+            last_height = new_height
+        getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay) #getPosts(driver.execute_script("return document.body"),args.delay) #getPosts(driver,args.delay) # remove_opaque = driver.find_element_by_tag_name('body').click()
+    
+    driver.stop_client()
+    driver.quit()
