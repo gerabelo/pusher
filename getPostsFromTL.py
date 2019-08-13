@@ -42,19 +42,15 @@ def getPosts(html_doc,delay):
             except:
                 None
 
-            links = post.find_all('a')
-            post_message = post.find("div",{"data-testid":"post_message"})    
-            for link in links:
-                    try:
-                        
-                        print('\n')
-                        print(link.get_text())
-                        print(post_message.get_text())
-                        print(createdAt)
-                        print('\n')
-                        
-                    except:
-                        None                        
+            try:
+                links = post.find_all('a')
+                post_message = post.find("div",{"data-testid":"post_message"})                    
+                print('\n')
+                print(post_message.get_text())
+                print(createdAt)
+                print('\n')                
+            except:
+                None                        
     except:
         return None
     # return len(articles)
