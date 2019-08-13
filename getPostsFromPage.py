@@ -93,7 +93,7 @@ if __name__ == "__main__":
         print("redirected")
         i = 0
         while True:
-            if i == args.scrolllevel:
+            if i == int(args.scrolllevel):
                 break
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             sleep(int(args.delay)*5)

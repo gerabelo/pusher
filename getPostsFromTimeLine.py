@@ -50,7 +50,7 @@ def getPosts(html_doc,delay):
 
                     print(link.get_text())
                     print(urllib.parse.unquote(external_url))
-                    
+
                 post_message = post.find("div",{"data-testid":"post_message"})                    
                 print(post_message.get_text())
                 print(createdAt)
@@ -59,7 +59,7 @@ def getPosts(html_doc,delay):
                 None                        
     except:
         return None
-    # return len(articles)
+    # return len(posts)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Facebook Auto Publisher')
@@ -102,7 +102,7 @@ if __name__ == "__main__":
                     break
                 last_height = new_height
                 i += 1
-                print(i,int(args.scrolllevel))
+                print('.',end='')
             getPosts(driver.find_element_by_id('timeline_tab_content').get_attribute("innerHTML"),args.delay)
 
     driver.stop_client()
