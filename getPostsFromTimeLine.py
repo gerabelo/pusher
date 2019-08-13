@@ -32,20 +32,19 @@ def getPosts(html_doc,delay):
     try:
         soup = BeautifulSoup(html_doc, 'html.parser')
         posts = soup.find_all("div",{"role":"article"})# posts = soup.find_all("div",id=lambda value: value and value.startswith("jumper_"))
-        
-
         for post in posts:
-            
             try:
                 createdAt = post.select_one("abbr")["title"]                        
                 collection.insert_one({"publicacao":str(post),"CollectedUTC":datetime.utcnow().strftime("%d/%m/%Y-%H%M%S"),"createdAt":createdAt})                    
             except:
                 None
-
             try:
-                # links = post.find_all('a')
+                links = post.find_all('a')
+                for link in links:
+                    href = link.get('href')
+                    print(link.get_text())
+                    print(href)
                 post_message = post.find("div",{"data-testid":"post_message"})                    
-                print('\n')
                 print(post_message.get_text())
                 print(createdAt)
                 print('\n')                
@@ -68,7 +67,6 @@ if __name__ == "__main__":
     client = MongoClient("mongodb://localhost:27017")
     db = client['facebook']
     collection = db[args.timeline]
-
 
     chrome_options = webdriver.ChromeOptions()
     prefs = {"profile.default_content_setting_values.notifications" : 2}
