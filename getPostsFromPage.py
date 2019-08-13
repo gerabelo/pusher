@@ -36,7 +36,7 @@ def getPosts(html_doc,delay):
     for article in articles:        
         try:
             createdAt = article.select_one("abbr")["title"]                        
-            collection.insert_one({"publicacao":str(article),"CollectedUTC":datetime.utcnow().strftime("%d/%m/%Y-%H%M%S"),"createdAt":createdAt})                    
+            collection.insert_one({"publicacao":str(article),"CollectedUTC":datetime.utcnow().strftime("%d/%m/%Y-%H:%M:%S"),"createdAt":createdAt})                    
         except:
             None
 

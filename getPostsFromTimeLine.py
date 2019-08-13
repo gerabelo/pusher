@@ -35,7 +35,7 @@ def getPosts(html_doc,delay):
         for post in posts:
             try:
                 createdAt = post.select_one("abbr")["title"]                        
-                collection.insert_one({"publicacao":str(post),"CollectedUTC":datetime.utcnow().strftime("%d/%m/%Y-%H%M%S"),"createdAt":createdAt})                    
+                collection.insert_one({"publicacao":str(post),"CollectedUTC":datetime.utcnow().strftime("%d/%m/%Y-%H:%M:%S"),"createdAt":createdAt})                    
             except:
                 None
             try:
@@ -77,7 +77,9 @@ if __name__ == "__main__":
 
     chrome_options = webdriver.ChromeOptions()
     prefs = {"profile.default_content_setting_values.notifications" : 2}
+    
     chrome_options.add_experimental_option("prefs",prefs)
+    chrome_options.add_argument('log-level=3')
     driver = webdriver.Chrome(chrome_options=chrome_options)
     # driver = webdriver.Chrome()
 
