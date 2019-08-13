@@ -83,7 +83,7 @@ if __name__ == "__main__":
             print("redirected")
             i = 0
             while True:
-                if i == args.scrolllevel:
+                if i == int(args.scrolllevel):
                     # getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay)
                     break
                 # remove_opaque = driver.find_element_by_xpath("//div[@id='mainContainer']")
@@ -97,7 +97,8 @@ if __name__ == "__main__":
                     break
                 last_height = new_height
                 i += 1
+                print(i,int(args.scrolllevel))
             getPosts(driver.find_element_by_id('timeline_tab_content').get_attribute("innerHTML"),args.delay)
-            
+
     driver.stop_client()
     driver.quit()
