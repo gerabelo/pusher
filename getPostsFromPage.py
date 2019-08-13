@@ -34,6 +34,12 @@ def getPosts(html_doc,delay):
     articles = soup.find_all("div",{"role":"article"}) #articles = driver.find_elements_by_xpath("//div[@role='article']")
 
     for article in articles:        
+        try:
+            createdAt = article.select_one("abbr")["title"]                        
+            collection.insert_one({"publicacao":str(article),"CollectedUTC":datetime.utcnow().strftime("%d/%m/%Y-%H%M%S"),"createdAt":createdAt})                    
+        except:
+            None
+                    
         links = article.find_all('a')
         post = article.find("div",{"data-testid":"post_message"})
     
@@ -50,7 +56,6 @@ def getPosts(html_doc,delay):
                 text = link.get_text()
                 if len(text.split()) > 2:
                     try:
-                        createdAt = article.select_one("abbr")["title"]                        
                         print('\n')
                         print(href)
                         print(text)
@@ -58,7 +63,6 @@ def getPosts(html_doc,delay):
                         print(post.get_text())
                         print(createdAt)
                         print('\n')
-                        collection.insert_one({"publicacao":str(article),"CollectedUTC":datetime.utcnow().strftime("%d/%m/%Y-%H%M%S"),"createdAt":createdAt})                    
                     except:
                         None
                         
