@@ -31,40 +31,30 @@ def getPosts(html_doc,delay):
     # print(html_doc)
     try:
         soup = BeautifulSoup(html_doc, 'html.parser')
-        articles = soup.find_all("div",id=lambda value: value and value.startswith("jumper_"))
+        posts = soup.find_all("div",id=lambda value: value and value.startswith("jumper_"))
         
 
-        for article in articles:
+        for post in posts:
             
             try:
-                createdAt = article.select_one("abbr")["title"]                        
-                collection.insert_one({"publicacao":str(article),"CollectedUTC":datetime.utcnow().strftime("%d/%m/%Y-%H%M%S"),"createdAt":createdAt})                    
+                createdAt = post.select_one("abbr")["title"]                        
+                collection.insert_one({"publicacao":str(post),"CollectedUTC":datetime.utcnow().strftime("%d/%m/%Y-%H%M%S"),"createdAt":createdAt})                    
             except:
                 None
 
-            links = article.find_all('a')
-            post = article.find("div",{"data-testid":"post_message"})    
+            links = post.find_all('a')
+            post_message = post.find("div",{"data-testid":"post_message"})    
             for link in links:
-                href = link.get('href')
-                if href[:24] == 'https://l.facebook.com/l':
-                    for i,j in enumerate(href):
-                        if j == '&':
-                            external_url = href[31:i]
-                            break
-                    text = link.get_text()
-                    if len(text.split()) > 2:
-                        try:
-                            
-                            print('\n')
-                            print(href)
-                            print(text)
-                            print(urllib.parse.unquote(external_url))
-                            print(post.get_text())
-                            print(createdAt)
-                            print('\n')
-                            
-                        except:
-                            None                        
+                    try:
+                        
+                        print('\n')
+                        print(link.get_text())
+                        print(post_message.get_text())
+                        print(createdAt)
+                        print('\n')
+                        
+                    except:
+                        None                        
     except:
         return None
     # return len(articles)
@@ -73,14 +63,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Facebook Auto Publisher')
     parser.add_argument('email', help='Email address')
     parser.add_argument('password', help='Login password')
-    parser.add_argument('timeline', help='Time line')
+    parser.add_argument('timeline', help='Time Line')
     parser.add_argument('delay', help='Delay')
 
     args = parser.parse_args()
 
     client = MongoClient("mongodb://localhost:27017")
     db = client['facebook']
-    collection = db[args.group]
+    collection = db[args.timeline]
 
 
     chrome_options = webdriver.ChromeOptions()
