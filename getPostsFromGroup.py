@@ -67,6 +67,7 @@ if __name__ == "__main__":
     parser.add_argument('password', help='Login password')
     parser.add_argument('group', help='Group')
     parser.add_argument('delay', help='Delay')
+    parser.add_argument('depth', help='Depth')
 
     args = parser.parse_args()
 
@@ -81,19 +82,31 @@ if __name__ == "__main__":
     driver = webdriver.Chrome(chrome_options=chrome_options)
     # driver = webdriver.Chrome()
 
+    delayed = False
+
     if login(driver,args.email,args.password):
         print("successfully logged in")
         if changePage(driver,'https://www.facebook.com/groups/'+args.group+'/',args.delay):
             last_height = driver.execute_script("return document.body.scrollHeight")
             print("redirected")
+            i = 0
             while True:
                 # remove_opaque = driver.find_element_by_xpath("//div[@id='mainContainer']")
                 # driver.execute_script("arguments[0].click();", remove_opaque)
                 # remove_opaque = driver.find_element_by_tag_name('body').click()
                 getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay)
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                sleep(int(args.delay)*5)
+                sleep(int(args.delay))
                 new_height = driver.execute_script("return document.body.scrollHeight")
-                if new_height == last_height:
+                if i == int(args.depth):
                     break
+                if new_height == last_height:
+                    if delayed:
+                        break
+                    else:
+                        delayed = True
+                        sleep(int(args.delay))
+                else:
+                    delayed = False
                 last_height = new_height
+                i += 1

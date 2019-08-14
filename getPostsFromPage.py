@@ -43,25 +43,28 @@ def getPosts(html_doc,delay):
         links = article.find_all('a')
         post = article.find("div",{"data-testid":"post_message"})
     
-        for link in links:
-            href = link.get('href')
-            if href[:24] == 'https://l.facebook.com/l':
-                for i,j in enumerate(href):
-                    if j == '&':
-                        external_url = href[31:i]
-                        break
-                text = link.get_text()
-                if len(text.split()) > 2:
-                    try:
-                        # print('\n')
-                        print(href)
-                        print(text)
-                        print(urllib.parse.unquote(external_url))
-                        print(post.get_text())
-                        # print(createdAt)
-                        print('\n')
-                    except:
-                        None
+        try:
+            for link in links:
+                href = link.get('href')
+                if href[:24] == 'https://l.facebook.com/l':
+                    for i,j in enumerate(href):
+                        if j == '&':
+                            external_url = href[31:i]
+                            break
+                    text = link.get_text()
+                    if len(text.split()) > 2:
+                        try:
+                            # print('\n')
+                            print(href)
+                            print(text)
+                            print(urllib.parse.unquote(external_url))
+                            print(post.get_text())
+                            # print(createdAt)
+                            print('\n')
+                        except:
+                            None
+        except:
+            None
                         
     # except:
     #     return None
@@ -88,6 +91,8 @@ if __name__ == "__main__":
     chrome_options.add_argument('log-level=3')
     driver = webdriver.Chrome(chrome_options=chrome_options)
 
+    delayed = False
+    
     if login(driver,args.email,args.password):
         print("successfully logged in")
         if changePage(driver,'https://www.facebook.com/pg/'+args.page+'/posts/',args.delay):
@@ -95,15 +100,22 @@ if __name__ == "__main__":
             print("redirected")
             i = 0
             while True:
-                i += 1
-                print(i) # print('.',end='')                
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                sleep(int(args.delay)*5)
+                sleep(int(args.delay))
                 new_height = driver.execute_script("return document.body.scrollHeight")
-                if new_height == last_height or i == int(args.scrolllevel):
+                if i == int(args.depth):
                     break
+                if new_height == last_height:
+                    if delayed:
+                        break
+                    else:
+                        delayed = True
+                        sleep(int(args.delay))
+                else:
+                    delayed = False
                 last_height = new_height
+                i += 1                
             getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay) #getPosts(driver.execute_script("return document.body"),args.delay) #getPosts(driver,args.delay) # remove_opaque = driver.find_element_by_tag_name('body').click()
-    
     driver.stop_client()
     driver.quit()
+    print(i)

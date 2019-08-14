@@ -83,6 +83,8 @@ if __name__ == "__main__":
     driver = webdriver.Chrome(chrome_options=chrome_options)
     # driver = webdriver.Chrome()
 
+    delayed = False
+
     if login(driver,args.email,args.password):
         print("successfully logged in")
         if changePage(driver,'https://www.facebook.com/'+args.timeline,args.delay):
@@ -93,16 +95,21 @@ if __name__ == "__main__":
                 # remove_opaque = driver.find_element_by_xpath("//div[@id='mainContainer']")
                 # driver.execute_script("arguments[0].click();", remove_opaque)
                 # remove_opaque = driver.find_element_by_tag_name('body').click()
-                
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 sleep(int(args.delay))
                 new_height = driver.execute_script("return document.body.scrollHeight")
-                if new_height == last_height or i == int(args.scrolllevel): ## getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay)
+                if i == int(args.depth):
                     break
+                if new_height == last_height:
+                    if delayed:
+                        break
+                    else:
+                        delayed = True
+                        sleep(int(args.delay))
+                else:
+                    delayed = False
                 last_height = new_height
-                i += 1
-                print('.',end='')
-            getPosts(driver.find_element_by_id('timeline_tab_content').get_attribute("innerHTML"),args.delay) #getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay)
-            
+                i += 1                
+            getPosts(driver.find_element_by_id('timeline_tab_content').get_attribute("innerHTML"),args.delay) #getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay)            
     driver.stop_client()
     driver.quit()
