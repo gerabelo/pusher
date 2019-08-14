@@ -34,7 +34,7 @@ def getPosts(html_doc,delay):
     articles = soup.find_all("div",{"role":"article"}) #articles = driver.find_elements_by_xpath("//div[@role='article']")
 
     for article in articles:        
-        try:
+        try:    
             createdAt = article.select_one("abbr")["title"]                        
             collection.insert_one({"publicacao":str(article),"CollectedUTC":datetime.utcnow().strftime("%d/%m/%Y-%H:%M:%S"),"createdAt":createdAt})                    
         except:
@@ -46,22 +46,19 @@ def getPosts(html_doc,delay):
         for link in links:
             href = link.get('href')
             if href[:24] == 'https://l.facebook.com/l':
-
-                
                 for i,j in enumerate(href):
                     if j == '&':
                         external_url = href[31:i]
                         break
-
                 text = link.get_text()
                 if len(text.split()) > 2:
                     try:
-                        print('\n')
+                        # print('\n')
                         print(href)
                         print(text)
                         print(urllib.parse.unquote(external_url))
                         print(post.get_text())
-                        print(createdAt)
+                        # print(createdAt)
                         print('\n')
                     except:
                         None
@@ -84,22 +81,29 @@ if __name__ == "__main__":
     db = client['facebook']
     collection = db[args.page]
 
-    driver = webdriver.Chrome()
+    chrome_options = webdriver.ChromeOptions()
+    prefs = {"profile.default_content_setting_values.notifications" : 2}
+    
+    chrome_options.add_experimental_option("prefs",prefs)
+    chrome_options.add_argument('log-level=3')
+    driver = webdriver.Chrome(chrome_options=chrome_options)
 
-    # if login(driver,args.email,args.password):
-    #     print("successfully logged in")
-    if changePage(driver,'https://www.facebook.com/pg/'+args.page+'/posts/',args.delay):
-        last_height = driver.execute_script("return document.body.scrollHeight")
-        print("redirected")
-        i = 0
-        while True:
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            sleep(int(args.delay)*5)
-            new_height = driver.execute_script("return document.body.scrollHeight")
-            if new_height == last_height or i == int(args.scrolllevel):
-                break
-            last_height = new_height
-        getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay) #getPosts(driver.execute_script("return document.body"),args.delay) #getPosts(driver,args.delay) # remove_opaque = driver.find_element_by_tag_name('body').click()
+    if login(driver,args.email,args.password):
+        print("successfully logged in")
+        if changePage(driver,'https://www.facebook.com/pg/'+args.page+'/posts/',args.delay):
+            last_height = driver.execute_script("return document.body.scrollHeight")
+            print("redirected")
+            i = 0
+            while True:
+                i += 1
+                print(i) # print('.',end='')                
+                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                sleep(int(args.delay)*5)
+                new_height = driver.execute_script("return document.body.scrollHeight")
+                if new_height == last_height or i == int(args.scrolllevel):
+                    break
+                last_height = new_height
+            getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay) #getPosts(driver.execute_script("return document.body"),args.delay) #getPosts(driver,args.delay) # remove_opaque = driver.find_element_by_tag_name('body').click()
     
     driver.stop_client()
     driver.quit()
