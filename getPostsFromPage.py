@@ -93,12 +93,10 @@ if __name__ == "__main__":
         print("redirected")
         i = 0
         while True:
-            if i == int(args.scrolllevel):
-                break
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             sleep(int(args.delay)*5)
             new_height = driver.execute_script("return document.body.scrollHeight")
-            if new_height == last_height:
+            if new_height == last_height or i == int(args.scrolllevel):
                 break
             last_height = new_height
         getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay) #getPosts(driver.execute_script("return document.body"),args.delay) #getPosts(driver,args.delay) # remove_opaque = driver.find_element_by_tag_name('body').click()

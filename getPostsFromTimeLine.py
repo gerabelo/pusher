@@ -90,9 +90,6 @@ if __name__ == "__main__":
             print("redirected")
             i = 0
             while True:
-                if i == int(args.scrolllevel):
-                    # getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay)
-                    break
                 # remove_opaque = driver.find_element_by_xpath("//div[@id='mainContainer']")
                 # driver.execute_script("arguments[0].click();", remove_opaque)
                 # remove_opaque = driver.find_element_by_tag_name('body').click()
@@ -100,12 +97,12 @@ if __name__ == "__main__":
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 sleep(int(args.delay))
                 new_height = driver.execute_script("return document.body.scrollHeight")
-                if new_height == last_height:
+                if new_height == last_height or i == int(args.scrolllevel): ## getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay)
                     break
                 last_height = new_height
                 i += 1
                 print('.',end='')
-            getPosts(driver.find_element_by_id('timeline_tab_content').get_attribute("innerHTML"),args.delay)
-
+            getPosts(driver.find_element_by_id('timeline_tab_content').get_attribute("innerHTML"),args.delay) #getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay)
+            
     driver.stop_client()
     driver.quit()
