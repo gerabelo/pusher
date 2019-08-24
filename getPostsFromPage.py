@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from time import sleep
 from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
 
 def login(driver,email,password):
     try:
@@ -55,7 +56,7 @@ def getPosts(html_doc,delay):
                     if len(text.split()) > 2:
                         try:
                             # print('\n')
-                            print(href)
+                            # print(href)
                             print(text)
                             print(urllib.parse.unquote(external_url))
                             print(post.get_text())
@@ -76,7 +77,7 @@ if __name__ == "__main__":
     parser.add_argument('password', help='Login password')
     parser.add_argument('page', help='Page')
     parser.add_argument('delay', help='Delay')
-    parser.add_argument('scrolllevel', help='Scroll level')
+    parser.add_argument('depth', help='Depth')
 
     args = parser.parse_args()
 
@@ -86,12 +87,14 @@ if __name__ == "__main__":
 
     chrome_options = webdriver.ChromeOptions()
     prefs = {"profile.default_content_setting_values.notifications" : 2}
-    
+    ua = UserAgent()
+    userAgent = ua.random
+    chrome_options.add_argument(f'user-agent={userAgent}')    
     chrome_options.add_experimental_option("prefs",prefs)
     chrome_options.add_argument('log-level=3')
     driver = webdriver.Chrome(chrome_options=chrome_options)
 
-    delayed = False
+    
     
     if login(driver,args.email,args.password):
         print("successfully logged in")
@@ -99,6 +102,7 @@ if __name__ == "__main__":
             last_height = driver.execute_script("return document.body.scrollHeight")
             print("redirected")
             i = 0
+            delayed = False
             while True:
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 sleep(int(args.delay))
@@ -110,7 +114,7 @@ if __name__ == "__main__":
                         break
                     else:
                         delayed = True
-                        sleep(int(args.delay))
+                        sleep(int(args.delay)*5)
                 else:
                     delayed = False
                 last_height = new_height

@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from time import sleep
 from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
 
 def login(driver,email,password):
     try:
@@ -62,6 +63,7 @@ def getPosts(html_doc,delay):
     # return len(articles)
 
 if __name__ == "__main__":
+    groups = ['Classificados-AM-254390881297184','classificadosmanaus','classificadosam']
     parser = argparse.ArgumentParser(description='Facebook Auto Publisher')
     parser.add_argument('email', help='Email address')
     parser.add_argument('password', help='Login password')
@@ -77,6 +79,9 @@ if __name__ == "__main__":
 
 
     chrome_options = webdriver.ChromeOptions()
+    ua = UserAgent()
+    userAgent = ua.random
+    chrome_options.add_argument(f'user-agent={userAgent}')
     prefs = {"profile.default_content_setting_values.notifications" : 2}
     chrome_options.add_experimental_option("prefs",prefs)
     driver = webdriver.Chrome(chrome_options=chrome_options)
@@ -90,11 +95,8 @@ if __name__ == "__main__":
             last_height = driver.execute_script("return document.body.scrollHeight")
             print("redirected")
             i = 0
+            delayed = False
             while True:
-                # remove_opaque = driver.find_element_by_xpath("//div[@id='mainContainer']")
-                # driver.execute_script("arguments[0].click();", remove_opaque)
-                # remove_opaque = driver.find_element_by_tag_name('body').click()
-                getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay)
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 sleep(int(args.delay))
                 new_height = driver.execute_script("return document.body.scrollHeight")
@@ -105,8 +107,31 @@ if __name__ == "__main__":
                         break
                     else:
                         delayed = True
-                        sleep(int(args.delay))
+                        sleep(int(args.delay)*5)
                 else:
                     delayed = False
                 last_height = new_height
-                i += 1
+                i += 1                
+            getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay) #getPosts(driver.execute_script("return document.body"),args.delay) #getPosts(driver,args.delay) # remove_opaque = driver.find_element_by_tag_name('body').click()
+
+
+            # while True:
+            #     # remove_opaque = driver.find_element_by_xpath("//div[@id='mainContainer']")
+            #     # driver.execute_script("arguments[0].click();", remove_opaque)
+            #     # remove_opaque = driver.find_element_by_tag_name('body').click()
+            #     getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay)
+            #     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            #     sleep(int(args.delay))
+            #     new_height = driver.execute_script("return document.body.scrollHeight")
+            #     if i == int(args.depth):
+            #         break
+            #     if new_height == last_height:
+            #         if delayed:
+            #             break
+            #         else:
+            #             delayed = True
+            #             sleep(int(args.delay))
+            #     else:
+            #         delayed = False
+            #     last_height = new_height
+            #     i += 1

@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from time import sleep
 from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
 
 def login(driver,email,password):
     try:
@@ -67,7 +68,7 @@ if __name__ == "__main__":
     parser.add_argument('password', help='Login password')
     parser.add_argument('timeline', help='Time line')
     parser.add_argument('delay', help='Delay')
-    parser.add_argument('scrolllevel', help='Scroll level')
+    parser.add_argument('depth', help='Depth')
 
     args = parser.parse_args()
 
@@ -77,7 +78,9 @@ if __name__ == "__main__":
 
     chrome_options = webdriver.ChromeOptions()
     prefs = {"profile.default_content_setting_values.notifications" : 2}
-    
+    ua = UserAgent()
+    userAgent = ua.random
+    chrome_options.add_argument(f'user-agent={userAgent}')    
     chrome_options.add_experimental_option("prefs",prefs)
     chrome_options.add_argument('log-level=3')
     driver = webdriver.Chrome(chrome_options=chrome_options)
