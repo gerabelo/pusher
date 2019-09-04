@@ -87,9 +87,9 @@ if __name__ == "__main__":
 
     chrome_options = webdriver.ChromeOptions()
     prefs = {"profile.default_content_setting_values.notifications" : 2}
-    ua = UserAgent()
-    userAgent = ua.random
-    chrome_options.add_argument(f'user-agent={userAgent}')    
+    # ua = UserAgent()
+    # userAgent = ua.random
+    # chrome_options.add_argument(f'user-agent={userAgent}')    
     chrome_options.add_experimental_option("prefs",prefs)
     chrome_options.add_argument('log-level=3')
     driver = webdriver.Chrome(chrome_options=chrome_options)

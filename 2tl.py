@@ -41,8 +41,8 @@ def postMessage(driver,message,delay):
         post_box.click()
         post_box.send_keys(message)
         sleep(delay)
-        post_it=driver.find_element_by_xpath("//*[@id='u_0_1a']/div/div[6]/div/ul/li[2]/button")
-        post_it.click()
+        post_it = driver.find_element_by_xpath("//button[@data-testid='react-composer-post-button']")
+        driver.execute_script("arguments[0].click();", post_it)        
     except:
         return None
     return driver.title

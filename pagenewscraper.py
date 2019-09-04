@@ -84,7 +84,7 @@ if __name__ == "__main__":
     parser.add_argument('email', help='Email address')
     parser.add_argument('password', help='Login password')
     # parser.add_argument('page', help='Page')
-    pages = ['ACriticaCom','bncplay','radiocbn','UOLNoticias']
+    pages = ['radiocbn','UOLNoticias','ACriticaCom','bncplay','Exame']
     parser.add_argument('delay', help='Delay')
     parser.add_argument('depth', help='Depth')
 
@@ -131,4 +131,3 @@ if __name__ == "__main__":
                 getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay) #getPosts(driver.execute_script("return document.body"),args.delay) #getPosts(driver,args.delay) # remove_opaque = driver.find_element_by_tag_name('body').click()
     driver.stop_client()
     driver.quit()
-    print(i)

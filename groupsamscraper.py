@@ -77,9 +77,9 @@ if __name__ == "__main__":
     db = client['facebook']
 
     chrome_options = webdriver.ChromeOptions()
-    ua = UserAgent()
-    userAgent = ua.random
-    chrome_options.add_argument(f'user-agent={userAgent}')
+    # ua = UserAgent()
+    # userAgent = ua.random
+    # chrome_options.add_argument(f'user-agent={userAgent}')
     prefs = {"profile.default_content_setting_values.notifications" : 2}
     chrome_options.add_experimental_option("prefs",prefs)
     driver = webdriver.Chrome(chrome_options=chrome_options)
@@ -114,7 +114,8 @@ if __name__ == "__main__":
                     i += 1                
                 getPosts(driver.find_element_by_tag_name('body').get_attribute("innerHTML"),args.delay) #getPosts(driver.execute_script("return document.body"),args.delay) #getPosts(driver,args.delay) # remove_opaque = driver.find_element_by_tag_name('body').click()
 
-
+    driver.stop_client()
+    driver.close()
             # while True:
             #     # remove_opaque = driver.find_element_by_xpath("//div[@id='mainContainer']")
             #     # driver.execute_script("arguments[0].click();", remove_opaque)
